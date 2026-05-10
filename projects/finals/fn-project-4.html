@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
+    <title>Finals - Lab Exercise 4 - Portfolio</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
@@ -15,54 +15,91 @@
 
     <main class="project-details container">
         <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
+            <h1>Finals - Lab Exercise 4 (CIFAR-10 Custom Image Prediction)</h1>
+            <p><strong>Description:</strong> The final application phase of the CIFAR-10 deep learning pipeline, where the optimized Convolutional Neural Network (CNN) is utilized to classify three external, real-world images.</p>
+            <p><strong>Objectives/Purpose:</strong></p>
+            <ul>
+                <li>To import and process external image files that were not part of the original CIFAR-10 dataset.</li>
+                <li>To build a preprocessing script that resizes and normalizes custom images to match the model's strict input constraints (32x32x3).</li>
+                <li>To execute the prediction function and extract both the predicted class label and its statistical confidence score.</li>
+                <li>To visualize the final predictions alongside the original images using Matplotlib.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Key Features</h2>
             <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
+                <li><strong>Custom Inference Pipeline:</strong> Developed a looping script capable of taking an array of local image paths, processing them sequentially, and displaying the results dynamically.</li>
+                <li><strong>Rigorous Preprocessing:</strong> Ensured data integrity by utilizing Keras's <code>image.load_img</code> to force a 32x32 resolution and manually dividing pixel arrays by 255.0 to match the training data's normalization.</li>
+                <li><strong>Confidence Scoring:</strong> Extracted the raw Softmax probability distributions, mapping the highest probability index to the corresponding class name (e.g., 'airplane', 'dog') and converting the floating-point value into a readable percentage.</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
+            
+            <p><strong>1. Image Loading and Dimension Matching</strong><br>
+            Neural networks require exact input shapes. This block loads an arbitrary external image, forces it into a 32x32 dimension, converts it into a mathematical array, and normalizes the pixel data.</p>
+            <pre><code>from tensorflow.keras.preprocessing import image
+import numpy as np
+
+# Load the image and resize it to match CIFAR-10 dimensions
+img = image.load_img(img_path, target_size=(32, 32))
+img_array = image.img_to_array(img)
+
+# Normalize the image 
+img_array = img_array / 255.0</code></pre>
+
+            <p><strong>2. Batch Expansion and Prediction</strong><br>
+            Keras models expect inputs in batches, even when predicting a single image. The <code>np.expand_dims</code> function wraps the 3D image array into a 4D tensor (1, 32, 32, 3) before passing it to the model.</p>
+            <pre><code># Expand dimensions to create a "batch" of 1 image
+img_batch = np.expand_dims(img_array, axis=0)
+
+# Make the prediction
+predictions = model.predict(img_batch)</code></pre>
+
+            <p><strong>3. Parsing the Output Vector</strong><br>
+            The model returns an array of 10 probabilities. <code>np.argmax</code> finds the index of the highest probability, which is then mapped against the class names array.</p>
+            <pre><code># Get the index of the highest probability and map to class name
+predicted_class_index = np.argmax(predictions[0])
+predicted_class_name = class_names[predicted_class_index]
+
+# Calculate confidence percentage
+confidence = np.max(predictions[0]) * 100</code></pre>
         </section>
 
         <section class="doc-section">
             <h2>Screenshots & Results</h2>
-            <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
+            <div class="image-container">
+                <img src="../../images/fn-project-4.png" alt="CIFAR-10 Custom Image Prediction Results" class="project-img">
             </div>
+            <br>
+            <h3>Observations:</h3>
+            <ul>
+                <li>The model successfully generalized its learned features to external data, correctly identifying the 3 custom images despite variations in lighting, background, and original resolution.</li>
+                <li>Resizing high-resolution images down to 32x32 causes significant pixelation, yet the CNN's spatial filters were robust enough to detect the core identifying patterns of the objects.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Tools & Technologies</h2>
             <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
+                <li><strong>Languages:</strong> Python 3</li>
+                <li><strong>Libraries/Frameworks:</strong> TensorFlow/Keras (preprocessing.image module), NumPy (array manipulation), Matplotlib (subplot visualization)</li>
+                <li><strong>Platforms:</strong> Google Colab</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
+            <p><strong>Problems Encountered:</strong> A common error when passing a single 32x32 RGB image array to a CNN is a shape mismatch exception. The model is mathematically designed to expect a 4-dimensional tensor <code>(batch_size, height, width, channels)</code>, but a single image is only 3-dimensional <code>(height, width, channels)</code>.</p>
+            <p><strong>How I Solved Them:</strong> I utilized NumPy's <code>expand_dims(..., axis=0)</code> function to wrap the image array inside another array. This artificially creates a "batch" containing exactly one image, satisfying the Keras API requirement without altering the underlying image data.</p>
         </section>
 
         <section class="doc-section">
             <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
+            <p><strong>What I Learned:</strong> I learned how to bridge the gap between model training and actual inference. It reinforced the concept that any data fed into a trained model must undergo the exact same preprocessing and scaling steps as the original training dataset.</p>
+            <p><strong>Skills Gained:</strong> Python image processing with Keras utilities, multi-dimensional array manipulation using NumPy, and extracting readable data from raw Softmax probability outputs.</p>
         </section>
     </main>
 
