@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
+    <title>Finals - Lab Exercise 3 - Portfolio</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
@@ -15,54 +15,94 @@
 
     <main class="project-details container">
         <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
+            <h1>Finals - Lab Exercise 3 (CIFAR-10 Highest Accuracy)</h1>
+            <p><strong>Description:</strong> An optimization project aimed at maximizing the predictive accuracy of the previously built CIFAR-10 Convolutional Neural Network (CNN) through hyperparameter tuning and regularization.</p>
+            <p><strong>Objectives/Purpose:</strong></p>
+            <ul>
+                <li>To combat model overfitting by introducing Dropout layers.</li>
+                <li>To fine-tune the gradient descent process by modifying the Adam optimizer's learning rate.</li>
+                <li>To extend the training duration (epochs) to allow the network to learn deeper spatial patterns.</li>
+                <li>To serialize and convert the final optimized model into a lightweight format (TensorFlow Lite) for potential edge deployment.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Key Features</h2>
             <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
+                <li><strong>Dropout Regularization:</strong> Implemented a <code>Dropout(0.3)</code> layer, randomly deactivating 30% of the neurons during each training pass to prevent the network from heavily relying on specific features, thereby forcing it to learn more generalized patterns.</li>
+                <li><strong>Custom Learning Rate:</strong> Adjusted the default Adam optimizer learning rate down to <code>0.0005</code> to ensure stable weight updates, preventing the optimization algorithm from overshooting the global minimum during the extended training run.</li>
+                <li><strong>Model Serialization (TFLite):</strong> Utilized the <code>TFLiteConverter</code> to transform the heavy Keras model into a highly optimized, mobile-ready <code>.tflite</code> file.</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
+            
+            <p><strong>1. Implementing Dropout & Custom Optimizer</strong><br>
+            This snippet shows the architectural update where the dropout layer is added just before the final classification layer, followed by the compilation using a carefully tuned learning rate.</p>
+            <pre><code># Adding a dropout layer to reduce overfitting
+model.add(tf.keras.layers.Dropout(0.3))
+
+# Adding the output layer
+model.add(tf.keras.layers.Dense(units=10, activation='softmax'))
+
+# Modifying the optimizer settings for stable learning
+optimizer = tf.keras.optimizers.Adam(learning_rate=0.0005)
+model.compile(loss="sparse_categorical_crossentropy", 
+              optimizer=optimizer, 
+              metrics=["sparse_categorical_accuracy"])</code></pre>
+
+            <p><strong>2. Extended Training</strong><br>
+            The training loop was extended to 20 epochs to give the model ample time to extract complex features from the 50,000 training images.</p>
+            <pre><code># Train the model for a longer period
+model.fit(X_train, y_train, epochs=20)</code></pre>
+
+            <p><strong>3. TensorFlow Lite Conversion</strong><br>
+            This block demonstrates how to convert the trained deep learning model into a lightweight artifact suitable for mobile or embedded devices.</p>
+            <pre><code>import tensorflow as tf
+
+# Convert and save the model
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+tflite_model = converter.convert()
+
+with open('cifar_model.tflite', 'wb') as f:
+  f.write(tflite_model)</code></pre>
         </section>
 
         <section class="doc-section">
             <h2>Screenshots & Results</h2>
-            <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
+            <div class="image-container">
+                <img src="../../images/fn-project-3.png" alt="CIFAR-10 Highest Accuracy Training Output" class="project-img">
             </div>
+            <br>
+            <h3>Execution Output & Metrics (At Epoch 20):</h3>
+            <ul>
+                <li><strong>Final Training Accuracy:</strong> 93.77%</li>
+                <li><strong>Final Training Loss:</strong> 0.1713</li>
+                <li><strong>Highest Test Accuracy:</strong> 75.83%</li>
+                <li><strong>Final Test Loss:</strong> 1.1226</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Tools & Technologies</h2>
             <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
+                <li><strong>Languages:</strong> Python 3</li>
+                <li><strong>Libraries/Frameworks:</strong> TensorFlow/Keras (Dropout, Adam Optimizer, TFLiteConverter), NumPy</li>
+                <li><strong>Platforms:</strong> Google Colab (T4 GPU Accelerator)</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
+            <p><strong>Problems Encountered:</strong> Training the model for 20 epochs allowed it to reach an impressive 93.77% training accuracy. However, evaluating the model against the test dataset yielded 75.83%. While the Dropout layer and adjusted learning rate pushed the highest test accuracy up from the previous exercise, a noticeable variance gap remains, indicating that the model still exhibits overfitting.</p>
+            <p><strong>How I Solved Them:</strong> The introduction of <code>Dropout(0.3)</code> proved effective in stabilizing the network's reliance on specific pixel regions. To close the remaining gap between training and testing accuracy in the future, the next logical step would be implementing Data Augmentation (e.g., random flips, rotations, and zooms) to artificially increase the diversity of the training data.</p>
         </section>
 
         <section class="doc-section">
             <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
+            <p><strong>What I Learned:</strong> I learned that raw accuracy on a training dataset is an incomplete metric, and that model evaluation must be strictly judged on unseen data. I also gained practical experience with TensorFlow Lite, bridging the gap between training a model in the cloud and preparing it for real-world deployment.</p>
+            <p><strong>Skills Gained:</strong> Deep learning hyperparameter tuning, applying regularization techniques (Dropout) to CNNs, analyzing training vs. validation divergence, and utilizing <code>TFLiteConverter</code>.</p>
         </section>
     </main>
 
