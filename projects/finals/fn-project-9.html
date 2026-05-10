@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
+    <title>Finals - Hands-on Project (MIT App Inventor) - Portfolio</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
@@ -15,54 +15,91 @@
 
     <main class="project-details container">
         <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
+            <h1>Finals - Hands-on Project (MIT App Inventor AI App Infographic)</h1>
+            <p><strong>Description:</strong> A mobile application development project focused on designing and deploying a Voice User Interface (VUI) Calculator using MIT App Inventor. The deliverable includes the functional Android application package and a comprehensive infographic detailing the system architecture.</p>
+            <p><strong>Objectives/Purpose:</strong></p>
+            <ul>
+                <li>To transition from predictive modeling into interactive application development.</li>
+                <li>To implement cloud-based AI components, specifically Speech-to-Text (STT) and Text-to-Speech (TTS), within a mobile environment.</li>
+                <li>To design an accessible, hands-free calculator driven entirely by natural language voice commands.</li>
+                <li>To synthesize the application's logic and user flow into a professional, easily digestible infographic.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Key Features</h2>
             <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
+                <li><strong>Voice User Interface (VUI):</strong> Replaced traditional touchscreen keypad inputs with a microphone-driven interface, allowing users to speak mathematical equations naturally.</li>
+                <li><strong>Auditory Feedback Loop:</strong> Integrated a Text-to-Speech engine that verbally announces the calculated result, ensuring a complete eyes-free and hands-free user experience.</li>
+                <li><strong>Visual System Architecture:</strong> Created a detailed infographic that maps out the underlying block logic, API calls, and data flow from the user's microphone to the final auditory output.</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
+            
+            <p><strong>1. Speech Recognition Trigger (Conceptual Block Logic)</strong><br>
+            Because MIT App Inventor uses visual block-based programming, the code below is a conceptual text representation of the event handlers used to trigger the device's microphone and capture the user's spoken string.</p>
+            <pre><code>// Event Handler for Microphone Button
+when btnMicrophone.Click do
+    call SpeechRecognizer1.GetText
+
+// Event Handler for Processing the Spoken Audio
+when SpeechRecognizer1.AfterGettingText(result) do
+    set txtInput.Text to result
+    call ProcessCalculation(result)</code></pre>
+
+            <p><strong>2. Text-to-Speech Output</strong><br>
+            Once the string is parsed and the mathematical operation is executed, the application dynamically constructs a sentence and passes it to the TTS component for auditory playback.</p>
+            <pre><code>// Function to Output the Result
+def OutputResult(calculated_value):
+    set txtResult.Text to calculated_value
+    
+    // Construct the verbal response
+    construct_message = join("The answer is ", calculated_value)
+    
+    // Trigger the device speaker
+    call TextToSpeech1.Speak(message = construct_message)</code></pre>
         </section>
 
         <section class="doc-section">
             <h2>Screenshots & Results</h2>
-            <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="image-container">
+                    <img src="../../images/fn-project-9-1.png" alt="Calculator VUI Infographic" class="project-img">
+                    <p style="text-align: center; margin-top: 10px; font-size: 0.9rem;"><em>VUI Architecture Infographic</em></p>
+                </div>
+                <div class="image-container">
+                    <img src="../../images/fn-project-9-2.png" alt="MIT App Inventor Interface" class="project-img">
+                    <p style="text-align: center; margin-top: 10px; font-size: 0.9rem;"><em>Mobile Interface & Block Logic</em></p>
+                </div>
             </div>
+            <br>
+            <h3>Observations:</h3>
+            <ul>
+                <li>The application successfully intercepted varying pronunciations of math operators (e.g., parsing both "plus" and "add" as the <code>+</code> operator). The infographic effectively communicated this complex logical branching in a simplified, visual format.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Tools & Technologies</h2>
             <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
+                <li><strong>Platforms:</strong> MIT App Inventor (Android Application Development)</li>
+                <li><strong>AI Components:</strong> SpeechRecognizer (STT), TextToSpeech (TTS)</li>
+                <li><strong>Design Tools:</strong> Canva / Graphic Design Software (for the Infographic)</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
+            <p><strong>Problems Encountered:</strong> Processing natural language in a calculator is significantly harder than capturing button clicks. When a user speaks "five times four," the SpeechRecognizer returns a raw text string. The application must identify the numbers and the operator within that string to perform actual math, which requires robust string manipulation.</p>
+            <p><strong>How I Solved Them:</strong> I utilized App Inventor's text processing blocks (like <code>split at spaces</code>) to break the spoken sentence into a list of individual words. I then built conditional logic to iterate through the list, identifying keywords like "times", "multiplied by", or "x", mapping them to the correct mathematical operation, and executing the calculation on the surrounding numerical values.</p>
         </section>
 
         <section class="doc-section">
             <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
+            <p><strong>What I Learned:</strong> I gained a practical understanding of Human-Computer Interaction (HCI) and accessibility. Building a Voice User Interface forces a developer to account for edge cases in human speech and error handling (e.g., what the app should say if it doesn't understand the audio).</p>
+            <p><strong>Skills Gained:</strong> Mobile application logic architecture, integrating external device APIs (Microphone/Speaker), string parsing algorithms, and translating technical software architectures into client-facing infographics.</p>
         </section>
     </main>
 
