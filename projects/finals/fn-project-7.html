@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
+    <title>Finals - Lab Exercise 7 - Portfolio</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
@@ -15,54 +15,92 @@
 
     <main class="project-details container">
         <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
+            <h1>Finals - Lab Exercise 7 (Web App using CIFAR-10)</h1>
+            <p><strong>Description:</strong> A comprehensive deployment project integrating the optimized 10-class CIFAR-10 Convolutional Neural Network into a Flask web application, allowing users to upload images for real-time, multi-category classification.</p>
+            <p><strong>Objectives/Purpose:</strong></p>
+            <ul>
+                <li>To upgrade the existing Flask application architecture to support multi-class prediction rather than simple binary logic.</li>
+                <li>To map a predefined list of string categories to the numeric index outputted by the model's Softmax layer.</li>
+                <li>To implement dynamic image resizing during preprocessing by programmatically extracting the model's expected input shape (32x32).</li>
+                <li>To evaluate the performance of the serialized CIFAR-10 TensorFlow Lite model in a web environment.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Key Features</h2>
             <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
+                <li><strong>Dynamic Multi-Class Inference:</strong> Adapted the backend logic to handle an output tensor containing 10 distinct probability distributions, correctly identifying the most probable class using NumPy's argmax function.</li>
+                <li><strong>Automated Tensor Extraction:</strong> Rather than hardcoding the 32x32 resolution into the Python script, the preprocessing function securely extracts the required dimensions directly from the TFLite interpreter's metadata, preventing dimension mismatch errors.</li>
+                <li><strong>Unified User Interface:</strong> Repurposed the responsive Jinja2 template to process and display results cleanly, applying string manipulation (capitalization) to the raw class names for better UI presentation.</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
+            
+            <p><strong>1. Dynamic Preprocessing & Class Mapping</strong><br>
+            This block defines the 10 possible categories and uses the model's internal <code>input_details</code> to safely extract the exact width and height needed for the uploaded image.</p>
+            <pre><code>from PIL import Image
+import numpy as np
+
+# CIFAR-10 class names from the training notebook
+CLASS_NAMES = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+
+def preprocess_image(image_path):
+    img = Image.open(image_path).convert("RGB")
+    # Dynamically extract target shape (32x32) from the model's input details
+    _, height, width, _ = input_details[0]['shape']
+    img = img.resize((width, height))
+    # Normalize pixel values to [0, 1]
+    img_array = np.array(img).astype(np.float32) / 255.0
+    return np.expand_dims(img_array, axis=0)</code></pre>
+
+            <p><strong>2. Multi-class Softmax Interpretation</strong><br>
+            Instead of evaluating against a 0.5 threshold (like in the binary Dog vs. Cat model), this logic finds the index of the highest value in the output array and matches it to the string label array.</p>
+            <pre><code># Predict
+interpreter.set_tensor(input_details[0]['index'], input_data)
+interpreter.invoke()
+output = interpreter.get_tensor(output_details[0]['index'])[0]
+
+# Handle CIFAR-10 Multi-class Logic
+idx = np.argmax(output)
+prediction = CLASS_NAMES[idx].capitalize()
+confidence = float(output[idx]) * 100</code></pre>
         </section>
 
         <section class="doc-section">
             <h2>Screenshots & Results</h2>
-            <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="image-container"><img src="../../images/fn-project-7-1.png" alt="CIFAR-10 Web App Prediction 1" class="project-img"></div>
+                <div class="image-container"><img src="../../images/fn-project-7-2.png" alt="CIFAR-10 Web App Prediction 2" class="project-img"></div>
+                <div class="image-container"><img src="../../images/fn-project-7-3.png" alt="CIFAR-10 Web App Prediction 3" class="project-img"></div>
             </div>
+            <br>
+            <h3>Observations:</h3>
+            <ul>
+                <li>The TFLite model successfully processes the multi-class outputs rapidly within the Flask server. The use of <code>np.argmax()</code> ensures accurate index retrieval, allowing the frontend to dynamically display diverse categories like "Frog," "Airplane," or "Ship" alongside their confidence scores.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Tools & Technologies</h2>
             <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
+                <li><strong>Languages:</strong> Python 3, HTML5, CSS3</li>
+                <li><strong>Libraries/Frameworks:</strong> Flask, TensorFlow Lite (Inference API), NumPy (argmax probability distribution), PIL (Image Processing)</li>
+                <li><strong>Platforms:</strong> Localhost Web Server</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
+            <p><strong>Problems Encountered:</strong> The primary challenge was migrating the prediction evaluation logic. In the previous Lab Exercise (Dogs vs. Cats), the model had a single output node that provided a single probability. The CIFAR-10 model outputs a 1D array of 10 probabilities, meaning a simple <code>if output > 0.5</code> conditional statement would trigger an error.</p>
+            <p><strong>How I Solved Them:</strong> I utilized NumPy's <code>argmax()</code> function to scan the array of 10 probabilities and return the index of the highest value. I then established a <code>CLASS_NAMES</code> array containing the 10 labels in the exact order they were trained, allowing me to use the index to retrieve the correct human-readable string to send to the HTML frontend.</p>
         </section>
 
         <section class="doc-section">
             <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
+            <p><strong>What I Learned:</strong> I solidified my understanding of how Softmax activation functions operate in production environments. Managing arrays of probabilities requires strict mapping between the model's output nodes and the application's data structures.</p>
+            <p><strong>Skills Gained:</strong> Multi-class inference handling, advanced NumPy array operations, and developing modular Python backend functions for dynamic image processing.</p>
         </section>
     </main>
 
