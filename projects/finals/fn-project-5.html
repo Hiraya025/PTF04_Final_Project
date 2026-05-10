@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
+    <title>Finals - Lab Exercise 5 - Portfolio</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
@@ -15,54 +15,97 @@
 
     <main class="project-details container">
         <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
+            <h1>Finals - Lab Exercise 5 (Dogs vs. Cats Classifier)</h1>
+            <p><strong>Description:</strong> A deep learning project focusing on binary image classification. The goal was to build and train a Convolutional Neural Network (CNN) capable of accurately distinguishing between images of dogs and cats.</p>
+            <p><strong>Objectives/Purpose:</strong></p>
+            <ul>
+                <li>To efficiently load and preprocess large image datasets using Keras's <code>ImageDataGenerator</code>.</li>
+                <li>To design a CNN architecture specifically optimized for binary classification tasks.</li>
+                <li>To train the network using binary crossentropy loss and evaluate its generalization on validation data.</li>
+                <li>To perform live inference on external, unseen images of cats and dogs to verify real-world accuracy.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Key Features</h2>
             <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
+                <li><strong>Dynamic Data Loading:</strong> Utilized <code>ImageDataGenerator</code> to automatically load images from directory structures in batches, applying real-time pixel normalization (1./255) to prevent RAM exhaustion.</li>
+                <li><strong>Binary Classification Architecture:</strong> Transitioned from the Softmax output used in previous multi-class projects (like CIFAR-10) to a single-node Sigmoid output layer, which maps features to a probability score between 0 and 1.</li>
+                <li><strong>Threshold-Based Inference:</strong> Developed a custom prediction script that evaluates the Sigmoid output, classifying the image as a "Dog" if the probability exceeds 0.5, and a "Cat" if it falls below.</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
+            
+            <p><strong>1. Image Data Generation</strong><br>
+            This snippet demonstrates how memory constraints are bypassed. Instead of loading thousands of images into an array at once, the generator streams them from the directory in manageable batches while scaling the pixels.</p>
+            <pre><code>from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+# Rescale pixel values to a [0, 1] range
+train_datagen = ImageDataGenerator(rescale=1./255)
+
+training_set = train_datagen.flow_from_directory(
+    'dataset/training_set',
+    target_size=(64, 64),
+    batch_size=32,
+    class_mode='binary'
+)</code></pre>
+
+            <p><strong>2. Network Compilation for Binary Output</strong><br>
+            Unlike CIFAR-10 which used 10 output nodes and sparse categorical crossentropy, this model uses a single node with a Sigmoid activation and binary crossentropy for loss calculation.</p>
+            <pre><code># Output layer for binary classification
+model.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
+
+# Compiling the CNN
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])</code></pre>
+
+            <p><strong>3. Single Image Prediction Logic</strong><br>
+            After passing an unseen image through the trained network, the raw output is evaluated against a 0.5 mathematical threshold to determine the final class label.</p>
+            <pre><code># Make the prediction
+result = model.predict(img_batch)
+
+# Evaluate the probability output
+if result[0][0] > 0.5:
+    prediction = 'Dog'
+else:
+    prediction = 'Cat'
+
+print(f"The model predicts: {prediction}")</code></pre>
         </section>
 
         <section class="doc-section">
             <h2>Screenshots & Results</h2>
-            <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
+            <div class="image-container" style="display: flex; flex-direction: column; gap: 20px;">
+                <img src="../../images/fn-project-5-1.png" alt="Custom Prediction Result - Dog" class="project-img">
+                <img src="../../images/fn-project-5-2.png" alt="Custom Prediction Result - Cat" class="project-img">
             </div>
+            <br>
+            <h3>Observations:</h3>
+            <ul>
+                <li>The model successfully classified both custom test images correctly. The CNN effectively learned to distinguish complex, abstract features (like snout shapes, ear structures, and eye pupils) rather than just memorizing training data.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Tools & Technologies</h2>
             <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
+                <li><strong>Languages:</strong> Python 3</li>
+                <li><strong>Libraries/Frameworks:</strong> TensorFlow/Keras (ImageDataGenerator, Conv2D, Binary Crossentropy), NumPy</li>
+                <li><strong>Platforms:</strong> Google Colab</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
+            <p><strong>Problems Encountered:</strong> The primary challenge was managing the dataset structure. Standard arrays (like <code>X_train</code> and <code>y_train</code> used in previous projects) are inefficient for thousands of high-resolution images, often crashing the Colab runtime environment due to RAM limits.</p>
+            <p><strong>How I Solved Them:</strong> I implemented Keras's <code>flow_from_directory</code> method. By organizing the dataset into strictly named subfolders (e.g., a 'cats' folder and a 'dogs' folder), the generator automatically inferred the class labels and loaded images sequentially only when needed during training epochs, completely resolving the memory bottleneck.</p>
         </section>
 
         <section class="doc-section">
             <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
+            <p><strong>What I Learned:</strong> I learned the architectural differences between multi-class and binary classification networks. Furthermore, I gained practical experience handling raw directory-based datasets, bridging the gap between curated academic datasets (like the pre-packaged CIFAR-10) and real-world data engineering.</p>
+            <p><strong>Skills Gained:</strong> Pipeline construction with <code>ImageDataGenerator</code>, implementing Sigmoid activation functions for probability thresholding, and organizing directory structures for automated label mapping.</p>
         </section>
     </main>
 
