@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
+    <title>Midterm - Hands-on Exercise 2 - Portfolio</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
@@ -15,54 +15,88 @@
 
     <main class="project-details container">
         <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
+            <h1>Midterm - Hands-on Exercise 2 (Linear Regression Using Neural Network - Plant Growth)</h1>
+            <p><strong>Description:</strong> A machine learning exercise implementing a Multi-Layer Perceptron (MLP) neural network to model non-linear synthetic data representing plant growth based on temperature.</p>
+            <p><strong>Objectives/Purpose:</strong></p>
+            <ul>
+                <li>To address the underfitting limitations observed in the previous simple linear regression exercise.</li>
+                <li>To implement an Artificial Neural Network (ANN) using Scikit-Learn's <code>MLPRegressor</code>.</li>
+                <li>To utilize a machine learning pipeline for data preprocessing (feature scaling) and model training.</li>
+                <li>To evaluate the performance improvements when applying a non-linear algorithm to quadratic data.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Key Features</h2>
             <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
+                <li><strong>Neural Network Implementation:</strong> Configured a multi-layer perceptron with two hidden layers (50 nodes each) and a ReLU activation function to capture complex patterns.</li>
+                <li><strong>Pipeline Integration:</strong> Used Scikit-Learn's <code>Pipeline</code> to seamlessly integrate <code>StandardScaler</code> with the neural network, ensuring the input features were properly normalized for the gradient-based optimizer.</li>
+                <li><strong>Significant Metric Improvement:</strong> Achieved an R-squared score of 0.92, demonstrating a highly accurate fit compared to the simple linear model (0.43).</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
+            
+            <p><strong>1. Pipeline Construction and Model Fitting</strong><br>
+            This block defines the processing pipeline. The <code>StandardScaler</code> standardizes the temperature data, which is essential for neural networks to converge efficiently. The <code>MLPRegressor</code> is then initialized with specific hyperparameters.</p>
+            <pre><code>model = Pipeline([
+    ("scaler", StandardScaler()),
+    ("nn", MLPRegressor(
+        hidden_layer_sizes=(50, 50),
+        activation="relu",
+        solver="adam",
+        max_iter=5000,
+        random_state=42
+    ))
+])
+
+model.fit(X, y)</code></pre>
+
+            <p><strong>2. Prediction and Evaluation</strong><br>
+            Once trained, the pipeline handles both the scaling and prediction of the input data. Standard regression metrics are computed to quantify model accuracy.</p>
+            <pre><code>y_pred = model.predict(X)
+
+mae = mean_absolute_error(y, y_pred)
+mse = mean_squared_error(y, y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(y, y_pred)</code></pre>
         </section>
 
         <section class="doc-section">
             <h2>Screenshots & Results</h2>
-            <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
+            <div class="image-container">
+                <img src="../../images/mt-project-2.png" alt="Plant Growth vs Temperature - Neural Network Scatter Plot" class="project-img">
             </div>
+            <br>
+            <h3>Evaluation Metrics Output:</h3>
+            <ul>
+                <li><strong>Mean Absolute Error (MAE):</strong> 3.88</li>
+                <li><strong>Mean Squared Error (MSE):</strong> 23.82</li>
+                <li><strong>Root Mean Squared Error (RMSE):</strong> 4.88</li>
+                <li><strong>R-squared (R²) Score:</strong> 0.92</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Tools & Technologies</h2>
             <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
+                <li><strong>Languages:</strong> Python 3</li>
+                <li><strong>Libraries/Frameworks:</strong> NumPy, Matplotlib, Scikit-Learn (MLPRegressor, StandardScaler, Pipeline)</li>
+                <li><strong>Platforms:</strong> Google Colab / Jupyter Notebook</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
+            <p><strong>Problems Encountered:</strong> The primary challenge was addressing the high bias (underfitting) from the previous exercise. Additionally, when using neural networks, raw unscaled data can cause the optimization algorithm (Adam) to converge slowly or find poor local minima.</p>
+            <p><strong>How I Solved Them:</strong> Replaced the simple linear model with an <code>MLPRegressor</code> capable of mapping non-linear functions. To ensure the model trained efficiently, I implemented a data scaling step using <code>StandardScaler</code>. Embedding this into a <code>Pipeline</code> prevented data leakage and kept the code modular and clean.</p>
         </section>
 
         <section class="doc-section">
             <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
+            <p><strong>What I Learned:</strong> I learned the practical necessity of feature scaling when working with distance-based or gradient-based algorithms like neural networks. I also observed firsthand how adding hidden layers and non-linear activation functions (ReLU) allows a model to conform to complex, underlying data distributions.</p>
+            <p><strong>Skills Gained:</strong> Constructing Scikit-Learn Pipelines, tuning basic neural network hyperparameters (hidden layers, activation, solver, iterations), and evaluating comparative model performance.</p>
         </section>
     </main>
 
