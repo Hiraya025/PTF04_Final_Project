@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
+    <title>Finals - Lab Exercise 6 - Portfolio</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
@@ -15,54 +15,103 @@
 
     <main class="project-details container">
         <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
+            <h1>Finals - Lab Exercise 6 (Flask Web App Dogs vs. Cats Classifier)</h1>
+            <p><strong>Description:</strong> A full-stack deployment project transitioning the optimized Dogs vs. Cats Convolutional Neural Network into a fully functional, local web application using the Flask framework and TensorFlow Lite.</p>
+            <p><strong>Objectives/Purpose:</strong></p>
+            <ul>
+                <li>To serialize the trained Keras CNN into a lightweight TensorFlow Lite (<code>.tflite</code>) format for efficient web deployment.</li>
+                <li>To build a Python-based Flask backend (<code>app.py</code>) to handle HTTP requests, file uploads, and model inference.</li>
+                <li>To develop a responsive HTML frontend (<code>index.html</code>) using Jinja templating to accept user image inputs and display predictions dynamically.</li>
+                <li>To implement robust server-side image preprocessing using PIL and NumPy to ensure uploaded images match the model's strict tensor requirements.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Key Features</h2>
             <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
+                <li><strong>Lightweight TFLite Inference:</strong> Replaced the heavy, standard TensorFlow prediction pipeline with <code>tf.lite.Interpreter</code>. This drastically reduced the application's memory footprint and improved inference speed, which is crucial for web servers.</li>
+                <li><strong>Dynamic Frontend via Jinja2:</strong> Utilized Flask's rendering engine to conditionally display UI elements. The frontend seamlessly updates to show the uploaded image, the predicted label ("Dog" or "Cat"), and the confidence percentage without requiring complex JavaScript frameworks.</li>
+                <li><strong>Robust Image Preprocessing:</strong> Built a custom pipeline to catch and process messy user uploads. The application automatically converts images to RGB, forces the dimensions to match the model's training resolution, scales pixel values to <code>[0, 1]</code>, and expands the array into a batch tensor.</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
+            
+            <p><strong>1. Loading the TFLite Interpreter</strong><br>
+            Instead of loading a heavy <code>.keras</code> file, the backend initializes a TensorFlow Lite interpreter, allocating memory only for the required mathematical operations.</p>
+            <pre><code>import tensorflow as tf
+
+# Load TFLite Model
+interpreter = tf.lite.Interpreter(model_path="model.tflite")
+interpreter.allocate_tensors()
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()</code></pre>
+
+            <p><strong>2. Server-Side Image Preprocessing</strong><br>
+            This function ensures that regardless of what resolution or aspect ratio the user uploads, the image is mathematically transformed into the exact format the CNN expects.</p>
+            <pre><code>from PIL import Image
+import numpy as np
+
+def preprocess_image(image_path):
+    img = Image.open(image_path).convert("RGB")
+    _, height, width, _ = input_details[0]['shape']
+    
+    img = img.resize((width, height))
+    img_array = np.array(img).astype(np.float32) / 255.0
+    
+    return np.expand_dims(img_array, axis=0)</code></pre>
+
+            <p><strong>3. Handling the Prediction Logic</strong><br>
+            This block handles the `POST` request, runs the preprocessed tensor through the TFLite interpreter, and calculates the confidence score based on the model's Sigmoid output node.</p>
+            <pre><code># Predict
+interpreter.set_tensor(input_details[0]['index'], input_data)
+interpreter.invoke()
+output = interpreter.get_tensor(output_details[0]['index'])[0]
+
+# Handle Model Logic
+if len(output) == 1:
+    conf = float(output[0])
+    prediction = "Cat" if conf > 0.5 else "Dog"
+    confidence = conf * 100 if conf > 0.5 else (1 - conf) * 100</code></pre>
         </section>
 
         <section class="doc-section">
             <h2>Screenshots & Results</h2>
-            <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="image-container"><img src="../../images/fn-project-6-1.png" alt="Flask Web App Screenshot 1" class="project-img"></div>
+                <div class="image-container"><img src="../../images/fn-project-6-2.png" alt="Flask Web App Screenshot 2" class="project-img"></div>
+                <div class="image-container"><img src="../../images/fn-project-6-3.png" alt="Flask Web App Screenshot 3" class="project-img"></div>
+                <div class="image-container"><img src="../../images/fn-project-6-4.png" alt="Flask Web App Screenshot 4" class="project-img"></div>
+                <div class="image-container"><img src="../../images/fn-project-6-5.png" alt="Flask Web App Screenshot 5" class="project-img"></div>
+                <div class="image-container"><img src="../../images/fn-project-6-6.png" alt="Flask Web App Screenshot 6" class="project-img"></div>
             </div>
+            <br>
+            <h3>Observations:</h3>
+            <ul>
+                <li>The Flask integration successfully handled multiple consecutive file uploads, storing them temporarily via the <code>uuid</code> module to prevent filename collisions, and accurately rendering the respective CNN predictions in the browser.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Tools & Technologies</h2>
             <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
+                <li><strong>Languages:</strong> Python 3, HTML5, CSS3, JavaScript (Frontend file reading)</li>
+                <li><strong>Libraries/Frameworks:</strong> Flask (Web Framework), Jinja2 (Templating), TensorFlow Lite (Inference API), PIL (Image Processing), NumPy</li>
+                <li><strong>Platforms:</strong> Localhost Web Server</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
+            <p><strong>Problems Encountered:</strong> Moving from a Colab notebook to a web server introduces the problem of handling unpredictable user inputs. If a user uploaded an image with an Alpha channel (RGBA) or a massive 4K resolution, the model would crash because it expects a strict `(1, target_height, target_width, 3)` tensor.</p>
+            <p><strong>How I Solved Them:</strong> I engineered a robust <code>preprocess_image()</code> pipeline. By utilizing the <code>.convert("RGB")</code> method from PIL, I stripped out any unexpected alpha channels. I then programmatically extracted the expected width and height directly from the <code>input_details</code> of the TFLite interpreter to guarantee the resizing logic would never mismatch the loaded model's architecture.</p>
         </section>
 
         <section class="doc-section">
             <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
+            <p><strong>What I Learned:</strong> I bridged the significant gap between Data Science (model training) and Software Engineering (application deployment). I learned how web servers process multipart form data (file uploads) and how to securely route that data through a machine learning model backend to generate a real-time HTTP response.</p>
+            <p><strong>Skills Gained:</strong> Python web framework architecture (Flask), server-side image preprocessing, model serialization with TFLite, and dynamic HTML templating with Jinja2.</p>
         </section>
     </main>
 
