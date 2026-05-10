@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
+    <title>Finals - Hands-on Exercise 2 - Portfolio</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
@@ -15,54 +15,92 @@
 
     <main class="project-details container">
         <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
+            <h1>Finals - Hands-on Exercise 2 (CIFAR-10 CNN Model Summary, Training and Accuracy)</h1>
+            <p><strong>Description:</strong> A deep learning computer vision project focused on building, training, and evaluating a Convolutional Neural Network (CNN) to classify the CIFAR-10 dataset into 10 distinct object categories.</p>
+            <p><strong>Objectives/Purpose:</strong></p>
+            <ul>
+                <li>To preprocess and normalize 32x32 RGB image data for neural network ingestion.</li>
+                <li>To design a multi-layer Convolutional Neural Network architecture for spatial feature extraction.</li>
+                <li>To utilize Max Pooling layers for dimensionality reduction and computational efficiency.</li>
+                <li>To compile, train, and evaluate the model using Sparse Categorical Crossentropy and the Adam optimizer.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Key Features</h2>
             <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
+                <li><strong>Data Normalization:</strong> Scaled pixel values from a 0-255 range down to a 0-1 float range, ensuring stable and faster gradient descent convergence.</li>
+                <li><strong>Deep CNN Architecture:</strong> Constructed a sequential model containing four <code>Conv2D</code> layers (increasing from 32 to 64 filters) to extract hierarchical visual features, interspersed with <code>MaxPool2D</code> layers.</li>
+                <li><strong>Dense Classification Head:</strong> Flattened the 2D feature maps into a 1D vector, passing it through a 120-unit hidden layer before outputting predictions via a 10-unit Softmax layer.</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
+            
+            <p><strong>1. Image Normalization</strong><br>
+            This simple but critical step divides all pixel matrices by 255.0, standardizing the input data distributions across the entire dataset.</p>
+            <pre><code>X_train = X_train / 255.0
+X_test = X_test / 255.0</code></pre>
+
+            <p><strong>2. CNN Model Architecture Definition</strong><br>
+            This block defines the core feature extraction and classification pipeline, utilizing a combination of convolution, pooling, and dense layers.</p>
+            <pre><code>model = tf.keras.models.Sequential()
+
+# Convolutional blocks for feature extraction
+model.add(tf.keras.layers.Conv2D(filters=32, kernel_size=3, padding="same", activation="relu", input_shape=[32, 32, 3]))
+model.add(tf.keras.layers.Conv2D(filters=32, kernel_size=3, padding="same", activation="relu"))
+model.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2, padding="valid"))
+
+model.add(tf.keras.layers.Conv2D(filters=64, kernel_size=3, padding="same", activation="relu"))
+model.add(tf.keras.layers.Conv2D(filters=64, kernel_size=3, padding="same", activation="relu"))
+model.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2, padding='valid'))
+
+# Flatten and Dense layers for classification
+model.add(tf.keras.layers.Flatten())
+model.add(tf.keras.layers.Dense(units=120, activation='relu'))
+model.add(tf.keras.layers.Dense(units=10, activation='softmax'))</code></pre>
+
+            <p><strong>3. Model Evaluation</strong><br>
+            After training for 5 epochs, the model is evaluated against the unseen test dataset to determine its actual real-world generalization accuracy.</p>
+            <pre><code>test_loss, test_accuracy = model.evaluate(X_test, y_test)
+print("Test accuracy: {}".format(test_accuracy))</code></pre>
         </section>
 
         <section class="doc-section">
             <h2>Screenshots & Results</h2>
-            <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
+            <div class="image-container">
+                <img src="../../images/fn-project-2-1.png" alt="CIFAR-10 Sample Image Visualization" class="project-img">
             </div>
+            <br>
+            <h3>Execution Output & Metrics:</h3>
+            <ul>
+                <li><strong>Total Parameters:</strong> 558,418 (All trainable)</li>
+                <li><strong>Final Training Accuracy (Epoch 5):</strong> 82.21%</li>
+                <li><strong>Final Test Accuracy:</strong> 74.31%</li>
+            </ul>
+            <p><em>Note: A gap of ~8% between training and testing accuracy indicates mild overfitting, which is common in deep networks trained without Dropout or Data Augmentation.</em></p>
         </section>
 
         <section class="doc-section">
             <h2>Tools & Technologies</h2>
             <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
+                <li><strong>Languages:</strong> Python 3</li>
+                <li><strong>Libraries/Frameworks:</strong> TensorFlow/Keras (Sequential API, Conv2D, MaxPool2D), NumPy, Matplotlib</li>
+                <li><strong>Platforms:</strong> Google Colab (T4 GPU Accelerator)</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
+            <p><strong>Problems Encountered:</strong> Managing the dimensionality of the tensors as they pass through multiple convolutional and pooling layers can be error-prone. Additionally, observing the accuracy drop from 82% (train) to 74% (test) highlighted the network's tendency to memorize training data features rather than generalizing them.</p>
+            <p><strong>How I Solved Them:</strong> I utilized the <code>model.summary()</code> method extensively to track the output shapes at each layer (e.g., watching the spatial dimensions shrink from 32x32 to 16x16, down to 8x8, before flattening into a 4096-element vector). To address the generalization gap in future iterations, regularization techniques like Dropout layers will need to be implemented.</p>
         </section>
 
         <section class="doc-section">
             <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
+            <p><strong>What I Learned:</strong> I solidified my understanding of how Convolutional Neural Networks operate differently from standard Multi-Layer Perceptrons. I learned how filters extract spatial hierarchies (edges to shapes to objects) and how Max Pooling reduces computational load while providing translational invariance.</p>
+            <p><strong>Skills Gained:</strong> Designing CNN architectures in Keras, analyzing model parameter summaries, and evaluating computer vision models on standardized benchmark datasets like CIFAR-10.</p>
         </section>
     </main>
 
