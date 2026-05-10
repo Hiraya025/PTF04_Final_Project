@@ -3,22 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
-    <link rel="stylesheet" href="../../css/style.css">
-</head>
-<body>
-    <header>
-        <nav class="navbar">
-            <a href="../../index.html" class="back-link">&larr; Back to Portfolio</a>
-        </nav>
-    </header>
-
-    <main class="project-details<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
+    <title>Midterm - Hands-on Long Quiz 1 - Portfolio</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
@@ -30,113 +15,87 @@
 
     <main class="project-details container">
         <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
+            <h1>Midterm - Hands-on Long Quiz 1 (Boston House Price Prediction)</h1>
+            <p><strong>Description:</strong> A data science and deep learning project acting as a Junior Data Scientist for a real estate developer. The goal was to understand factors influencing house prices and build a neural network to estimate property values.</p>
+            <p><strong>Objectives/Purpose:</strong></p>
+            <ul>
+                <li>Explore and clean the Boston Housing dataset (506 rows, 14 columns).</li>
+                <li>Perform feature selection using a correlation heatmap.</li>
+                <li>Build, train, and evaluate a Neural Network (NN) regression model using TensorFlow/Keras.</li>
+                <li>Deploy real-world predictions using scaled sample house data.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Key Features</h2>
             <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
+                <li><strong>Data-Driven Feature Selection:</strong> Utilized Seaborn correlation heatmaps to systematically identify the three most influential predictors of house prices: <code>LSTAT</code>, <code>RM</code>, and <code>PTRATIO</code>.</li>
+                <li><strong>Deep Learning Implementation:</strong> Designed a Keras <code>Sequential</code> model with <code>Dense</code> layers to map the selected features to a continuous price output.</li>
+                <li><strong>Epoch Comparative Analysis:</strong> Evaluated model performance (MAE, RMSE, R-squared) at different training lengths (100 vs. 300 epochs) to monitor learning improvements and potential overfitting.</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
+            
+            <p><strong>1. Data Loading and Preparation</strong><br>
+            This snippet demonstrates loading the dataset and standardizing the target variable name to ensure clarity during the modeling phase.</p>
+            <pre><code># Load Boston dataset from local Colab folder
+df = pd.read_csv('/content/Boston1.csv')
+
+# Rename the target column to PRICE for clarity
+df.rename(columns={'medv': 'price'}, inplace=True)</code></pre>
+
+            <p><strong>2. Single House Prediction Pipeline</strong><br>
+            After training, the model requires input features to be scaled in the exact same manner as the training data before making a prediction. The prediction is then converted back to actual dollar amounts.</p>
+            <pre><code># RM, LSTAT, PTRATIO
+sample_house = np.array([[6.0, 12.0, 15.0]]) 
+sample_house_scaled = scaler.transform(sample_house)
+
+# Make prediction
+predicted_price = model.predict(sample_house_scaled)
+
+# Convert from $1000s to actual dollars
+predicted_price_actual = predicted_price[0][0] * 100_000
+print('Predicted House Price (in dollars):', predicted_price_actual)</code></pre>
         </section>
 
         <section class="doc-section">
             <h2>Screenshots & Results</h2>
-            <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
+            
+            <div class="image-container" style="display: flex; flex-direction: column; gap: 20px;">
+                <img src="../../images/01.png" alt="Boston Housing Analysis 1" class="project-img">
+                <img src="../../images/02.png" alt="Boston Housing Analysis 2" class="project-img">
+                <img src="../../images/03.png" alt="Boston Housing Analysis 3" class="project-img">
             </div>
+            
+            <br>
+            <h3>Project Highlights:</h3>
+            <ul>
+                <li>Successfully identified that no columns contained null values, streamlining the preprocessing phase.</li>
+                <li>Configured a <code>StandardScaler</code> to ensure the neural network weights updated evenly across features with different scales.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Tools & Technologies</h2>
             <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
+                <li><strong>Languages:</strong> Python 3</li>
+                <li><strong>Libraries/Frameworks:</strong> TensorFlow, Keras (Sequential API), Pandas (DataFrames), Seaborn/Matplotlib (Heatmaps), Scikit-Learn (StandardScaler, train_test_split)</li>
+                <li><strong>Platforms:</strong> Google Colab</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
+            <p><strong>Problems Encountered:</strong> Identifying the most impactful features from a 14-column dataset can lead to dimensionality issues or noisy data if all features are fed blindly into a neural network.</p>
+            <p><strong>How I Solved Them:</strong> Instead of using all available data, I generated a correlation matrix and heatmap. This visually and mathematically highlighted that <code>LSTAT</code> (lower status of the population), <code>RM</code> (rooms per dwelling), and <code>PTRATIO</code> (pupil-teacher ratio) had the strongest linear relationship with the target variable, allowing for a more efficient and accurate predictive model.</p>
         </section>
 
         <section class="doc-section">
             <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; <span id="year"></span> Robert Benj S. Manuel.</p>
-    </footer>
-
-    <script src="../../js/main.js"></script>
-</body>
-</html> container">
-        <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
-        </section>
-
-        <section class="doc-section">
-            <h2>Key Features</h2>
-            <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
-            </ul>
-        </section>
-
-        <section class="doc-section">
-            <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
-        </section>
-
-        <section class="doc-section">
-            <h2>Screenshots & Results</h2>
-            <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
-            </div>
-        </section>
-
-        <section class="doc-section">
-            <h2>Tools & Technologies</h2>
-            <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
-            </ul>
-        </section>
-
-        <section class="doc-section">
-            <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
-        </section>
-
-        <section class="doc-section">
-            <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
+            <p><strong>What I Learned:</strong> I bridged the gap between traditional data analysis (EDA) and deep learning. I learned how crucial data preprocessing (like feature selection and scaling) is before even constructing the neural network layers.</p>
+            <p><strong>Skills Gained:</strong> Interpreting correlation matrices, building Keras Sequential models, tracking model loss across epochs, and transforming normalized predictions back into real-world, interpretable business values (dollars).</p>
         </section>
     </main>
 
