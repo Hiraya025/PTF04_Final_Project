@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
+    <title>Midterm Hands-On Project - Portfolio</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
@@ -15,54 +15,85 @@
 
     <main class="project-details container">
         <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
+            <h1>Midterm Hands-On Project (Improving Your Boston Housing Price Prediction Model)</h1>
+            <p><strong>Description:</strong> A collaborative optimization project focused on improving an existing Artificial Neural Network (ANN) used for real estate price prediction, concluding with a live web application deployment.</p>
+            <p><strong>Objectives/Purpose:</strong></p>
+            <ul>
+                <li>To identify and mitigate model overfitting observed in previous iterations.</li>
+                <li>To implement and evaluate Early Stopping as a regularization technique.</li>
+                <li>To expand the neural network's architecture by introducing an additional hidden layer.</li>
+                <li>To deploy the final, optimized model to an Anvil web application for real-time inference.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Key Features</h2>
             <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
+                <li><strong>Iterative Model Optimization:</strong> Conducted a controlled experiment across three distinct models (Baseline, Early Stopping, and Early Stopping + Extra Hidden Layer) to isolate the impact of each adjustment.</li>
+                <li><strong>Overfitting Mitigation:</strong> Successfully implemented an Early Stopping callback monitoring validation loss, preserving optimal network weights before memorization of the training set occurred.</li>
+                <li><strong>Cloud Deployment:</strong> Transitioned the model from a local notebook environment to a functional Anvil web application, processing live input features (RM, LSTAT, PTRATIO) into actionable dollar values.</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
+            
+            <p><strong>1. Early Stopping Implementation</strong><br>
+            This callback halts training if the validation loss fails to improve after 15 epochs, forcing the network to restore the weights from its most generalized state.</p>
+            <pre><code>from tensorflow.keras.callbacks import EarlyStopping
+
+early_stop = EarlyStopping(
+    monitor='val_loss', 
+    patience=15, 
+    restore_best_weights=True
+)</code></pre>
+
+            <p><strong>2. Expanding the Network Architecture</strong><br>
+            For Model 3, an additional dense hidden layer (32 neurons) was added to increase the network's capacity to map complex, non-linear real estate market patterns.</p>
+            <pre><code># Model with Early Stopping + Additional Hidden Layer
+model_3 = Sequential([
+    Dense(128, activation='relu', input_shape=(X_train.shape[1],)),
+    Dense(64, activation='relu'),
+    Dense(32, activation='relu'), # Newly added hidden layer
+    Dense(1, activation='linear')
+])
+
+model_3.fit(X_train, y_train, validation_split=0.2, epochs=300, callbacks=[early_stop])</code></pre>
         </section>
 
         <section class="doc-section">
             <h2>Screenshots & Results</h2>
-            <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
+            <div class="image-container" style="display: flex; flex-direction: column; gap: 20px;">
+                <img src="../../images/mt-project-4-1.png" alt="Training vs. Validation Loss Curve" class="project-img">
+                <img src="../../images/mt-project-4-2.png" alt="Anvil Web Application Interface" class="project-img">
             </div>
+            <br>
+            <h3>Observations:</h3>
+            <ul>
+                <li><strong>Early Stopping:</strong> Addressed severe overfitting by halting training when the model stopped generalizing, prioritizing real-world accuracy over raw training metrics.</li>
+                <li><strong>Architecture:</strong> The extra hidden layer, kept in check by Early Stopping, achieved the optimal structural balance and improved the overall Mean Absolute Error (MAE).</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Tools & Technologies</h2>
             <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
+                <li><strong>Languages:</strong> Python 3</li>
+                <li><strong>Libraries/Frameworks:</strong> TensorFlow/Keras (Sequential API, EarlyStopping), Pandas, Scikit-Learn</li>
+                <li><strong>Platforms:</strong> Google Colab, Anvil.works (Web App Deployment)</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
+            <p><strong>Problems Encountered:</strong> The baseline model produced excellent metrics on the training data but performed poorly on unseen data, an indicator of severe overfitting. Furthermore, the simple architecture was struggling to capture the extreme variance in property values driven by factors like low demographic status (LSTAT).</p>
+            <p><strong>How I Solved Them:</strong> I integrated an Early Stopping callback to automatically cut off the training loop once validation loss plateaued. To fix the capacity issue, I added a third hidden layer, ensuring the model was deep enough to process complex interactions between rooms (RM) and neighborhood status before passing it to the linear output layer.</p>
         </section>
 
         <section class="doc-section">
             <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
+            <p><strong>What I Learned:</strong> I learned that raw training performance can be deceptive and that visual loss curves are critical for diagnosing overfitting. Additionally, I bridged the gap between model training and model deployment, understanding how a trained Keras model interacts with a web framework.</p>
+            <p><strong>Skills Gained:</strong> Applying deep learning regularization techniques, evaluating comparative ML models, and deploying machine learning models to cloud-based web applications via Anvil uplinks.</p>
         </section>
     </main>
 
