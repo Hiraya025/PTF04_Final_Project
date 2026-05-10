@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
+    <title>Midterm - Hands-on Exercise 1 - Portfolio</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
@@ -15,54 +15,86 @@
 
     <main class="project-details container">
         <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
+            <h1>Midterm - Hands-on Exercise 1 (Linear Regression - Plant Growth)</h1>
+            <p><strong>Description:</strong> A machine learning exercise utilizing Python and Scikit-Learn to model the relationship between temperature and plant growth using a Simple Linear Regression model.</p>
+            <p><strong>Objectives/Purpose:</strong></p>
+            <ul>
+                <li>To generate synthetic data simulating plant growth across different temperatures.</li>
+                <li>To reshape and preprocess data for model ingestion.</li>
+                <li>To fit a linear regression model and generate growth predictions.</li>
+                <li>To quantitatively evaluate the model's performance using standard error and variance metrics.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Key Features</h2>
             <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
+                <li><strong>Synthetic Dataset Generation:</strong> Created a controlled dataset incorporating a non-linear underlying relationship (quadratic) with added Gaussian noise to simulate real-world data variability.</li>
+                <li><strong>End-to-End ML Pipeline:</strong> Demonstrated the complete workflow from data creation and reshaping to model fitting, prediction, and evaluation.</li>
+                <li><strong>Comprehensive Evaluation:</strong> Utilized multiple metrics (MAE, MSE, RMSE, R-squared) to assess the accuracy and suitability of the model.</li>
+                <li><strong>Data Visualization:</strong> Leveraged Matplotlib to plot the true data distribution against the linear regression line, visually highlighting the model's behavior.</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
+            
+            <p><strong>1. Synthetic Data Generation</strong><br>
+            This snippet generates the target variable (growth) based on a quadratic formula (peaking at 25°C) and adds random Gaussian noise to make the dataset realistic for regression testing.</p>
+            <pre><code># Simulate plant growth based in temperature (growth increases to a peak, then declines)
+growth = -0.1 * (temperatures - 25) ** 2 + 50 + np.random.normal(0, 5, size=temperatures.shape)</code></pre>
+
+            <p><strong>2. Model Fitting & Prediction</strong><br>
+            Here, the Scikit-Learn Linear Regression model is instantiated, trained on the reshaped 2D temperature array, and used to predict continuous growth values.</p>
+            <pre><code># Fit a linear regression model and predict growth
+model = LinearRegression()
+model.fit(temperatures, growth)
+
+growth_pred = model.predict(temperatures)</code></pre>
+
+            <p><strong>3. Model Evaluation</strong><br>
+            Standard metrics are calculated to evaluate the variance and error between the actual synthetic growth data and the model's linear predictions.</p>
+            <pre><code># Evaluate the model
+mae = mean_absolute_error(growth, growth_pred)
+mse = mean_squared_error(growth, growth_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(growth, growth_pred)</code></pre>
         </section>
 
         <section class="doc-section">
             <h2>Screenshots & Results</h2>
             <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
+                <p><em>[Insert Screenshot of the Matplotlib Scatter Plot here: "Plant Growth vs Temperature - Linear Regression"]</em></p>
             </div>
+            <br>
+            <h3>Evaluation Metrics Output:</h3>
+            <ul>
+                <li><strong>Mean Absolute Error (MAE):</strong> 11.08</li>
+                <li><strong>Mean Squared Error (MSE):</strong> 175.74</li>
+                <li><strong>Root Mean Squared Error (RMSE):</strong> 13.26</li>
+                <li><strong>R-squared (R²) Score:</strong> 0.437</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Tools & Technologies</h2>
             <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
+                <li><strong>Languages:</strong> Python 3</li>
+                <li><strong>Libraries/Frameworks:</strong> NumPy (array manipulation), Matplotlib (data visualization), Scikit-Learn (predictive modeling and metrics)</li>
+                <li><strong>Platforms:</strong> Google Colab / Jupyter Notebook</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
+            <p><strong>Problems Encountered:</strong> The primary analytical challenge observed was <em>underfitting</em>. Because the underlying synthetic data was generated using a quadratic formula (growth increasing up to 25°C and then declining), a simple linear regression model was mathematically unable to capture the curve, resulting in a low R-squared score (~43.7%) and visible deviation in the scatter plot.</p>
+            <p><strong>How I Solved Them:</strong> While the strict goal of this exercise was to successfully implement Linear Regression, observing this limitation was a critical learning moment. Recognizing the underfitting visually and quantitatively highlights the necessity of Exploratory Data Analysis (EDA) and points toward the future implementation of Polynomial Regression or tree-based algorithms for non-linear phenomena.</p>
         </section>
 
         <section class="doc-section">
             <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
+            <p><strong>What I Learned:</strong> I reinforced my understanding of the Scikit-Learn API workflow (instantiate, fit, predict) and the mathematical intuition behind standard evaluation metrics like MSE and R-squared. More importantly, I learned how to visually diagnose model bias and underfitting when applying a linear algorithm to non-linear data distributions.</p>
+            <p><strong>Skills Gained:</strong> Python data generation with NumPy, constructing ML pipelines using Scikit-Learn, generating 2D plots with Matplotlib, and critically evaluating regression model limitations.</p>
         </section>
     </main>
 
