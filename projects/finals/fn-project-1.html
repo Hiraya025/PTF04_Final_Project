@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
+    <title>Finals - Hands-on Exercise 1 - Portfolio</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
@@ -15,54 +15,93 @@
 
     <main class="project-details container">
         <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
+            <h1>Finals - Hands-on Exercise 1 (Boston House Price Prediction Model Deployment Using Streamlit)</h1>
+            <p><strong>Description:</strong> A machine learning deployment exercise transitioning the optimized Boston Housing Artificial Neural Network (ANN) from the previous term into a local, Python-native web application using the Streamlit framework.</p>
+            <p><strong>Objectives/Purpose:</strong></p>
+            <ul>
+                <li>To migrate model deployment away from the Anvil platform toward a script-based UI framework.</li>
+                <li>To construct an interactive web interface capable of accepting user inputs for key housing features (RM, LSTAT, PTRATIO).</li>
+                <li>To load serialized model files (`.keras`) and preprocessing objects (Scikit-Learn `StandardScaler`) into a new deployment environment.</li>
+                <li>To execute real-time inference and display formatted pricing predictions to the user.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Key Features</h2>
             <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
+                <li><strong>Streamlit UI Integration:</strong> Utilized Streamlit's declarative syntax to map interactive UI components (sliders and buttons) directly to backend Python variables without writing HTML or CSS.</li>
+                <li><strong>Stateful Resource Loading:</strong> Implemented caching mechanisms to load the deep learning model and scaler efficiently, preventing the app from reloading massive files upon every user interaction.</li>
+                <li><strong>Real-time Inference Pipeline:</strong> Scaled live user inputs exactly as the training data was scaled, fed them into the Keras model, and transformed the raw output tensor into a readable dollar format.</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
+            
+            <p><strong>1. Loading Serialized Components</strong><br>
+            This snippet demonstrates how the pre-trained neural network and the previously fitted `StandardScaler` are loaded into the Streamlit application. Using the <code>@st.cache_resource</code> decorator ensures these heavy objects are only loaded once into memory.</p>
+            <pre><code>import streamlit as st
+from tensorflow.keras.models import load_model
+import joblib
+
+# Cache the model and scaler to optimize performance
+@st.cache_resource
+def load_components():
+    model = load_model('boston_model.keras')
+    scaler = joblib.load('scaler.save')
+    return model, scaler
+
+model, scaler = load_components()</code></pre>
+
+            <p><strong>2. Constructing the Interface and Predicting</strong><br>
+            This block captures the specific demographic and structural inputs from the user via sliders. Upon clicking the predict button, the data is scaled, passed through the model, and displayed.</p>
+            <pre><code>st.title("Boston House Price Prediction")
+
+# Input sliders mapped to model features
+rm = st.slider("Average number of rooms per dwelling (RM)", 1.0, 10.0, 6.0)
+lstat = st.slider("Percentage of lower status of the population (LSTAT)", 1.0, 40.0, 12.0)
+ptratio = st.slider("Pupil-teacher ratio by town (PTRATIO)", 10.0, 25.0, 15.0)
+
+if st.button("Predict"):
+    # Reshape and scale the inputs
+    input_features = scaler.transform([[rm, lstat, ptratio]])
+    
+    # Generate prediction and convert to real-world value
+    prediction = model.predict(input_features)[0][0] * 100_000
+    st.success(f"Predicted House Price: ${prediction:,.2f}")</code></pre>
         </section>
 
         <section class="doc-section">
             <h2>Screenshots & Results</h2>
-            <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
+            <div class="image-container">
+                <img src="../../images/fn-project-1.png" alt="Streamlit Web Application Interface" class="project-img">
             </div>
+            <br>
+            <h3>Observations:</h3>
+            <ul>
+                <li>The Streamlit interface proved to be highly responsive. The deployment successfully maintained the accuracy of the Model 3 architecture developed during the Midterm, correctly adjusting price predictions based on the heavy negative weights associated with high LSTAT values.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Tools & Technologies</h2>
             <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
+                <li><strong>Languages:</strong> Python 3</li>
+                <li><strong>Libraries/Frameworks:</strong> Streamlit (Web UI), TensorFlow/Keras (Inference), Scikit-Learn (Data Scaling), Joblib (Serialization)</li>
+                <li><strong>Platforms:</strong> Localhost / Cloud Deployment</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
+            <p><strong>Problems Encountered:</strong> Transitioning from Anvil (which uses a drag-and-drop web builder and uplink) to Streamlit required a paradigm shift. The primary challenge was ensuring that the data scaling process remained identical to the training phase; feeding raw, unscaled inputs from the sliders into the model would result in wildly inaccurate predictions.</p>
+            <p><strong>How I Solved Them:</strong> I resolved this by saving the exact <code>StandardScaler</code> instance used during training via the <code>joblib</code> library. By loading this specific scaler into the Streamlit app, I guaranteed that the live input features were normalized using the exact same mean and variance as the original training dataset before being passed to the <code>model.predict()</code> function.</p>
         </section>
 
         <section class="doc-section">
             <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
+            <p><strong>What I Learned:</strong> I learned how to serialize and export machine learning models and their associated preprocessing objects for use outside of a Jupyter/Colab notebook. I also gained practical experience with Streamlit's script-based approach to building data applications.</p>
+            <p><strong>Skills Gained:</strong> Model serialization (HDF5/.keras and Joblib format), rapid UI prototyping in Python using Streamlit, and managing stateful resources in web applications.</p>
         </section>
     </main>
 
