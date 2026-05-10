@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Project Title] - Portfolio</title>
+    <title>Finals - Lab Quiz (Sentiment Analysis) - Portfolio</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
@@ -15,54 +15,96 @@
 
     <main class="project-details container">
         <section class="doc-section">
-            <h1>[Placeholder: Project Title]</h1>
-            <p><strong>Description:</strong> [Placeholder: What is the project about?]</p>
-            <p><strong>Objectives/Purpose:</strong> [Placeholder: List objectives here]</p>
+            <h1>Finals - Lab Quiz (Sentiment Analysis)</h1>
+            <p><strong>Description:</strong> A Natural Language Processing (NLP) deep learning project focused on building a Recurrent Neural Network (RNN) to analyze textual data and classify movie reviews as either positive or negative.</p>
+            <p><strong>Objectives/Purpose:</strong></p>
+            <ul>
+                <li>To transition from image-based Computer Vision tasks into sequential text analysis.</li>
+                <li>To load and preprocess the IMDB movie review dataset, managing vocabulary sizes and integer-encoded words.</li>
+                <li>To handle variable-length text inputs using sequence padding techniques.</li>
+                <li>To implement an Embedding layer and an RNN architecture designed to retain contextual memory across a sequence of words.</li>
+                <li>To evaluate the model's accuracy on custom, real-world sentences.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Key Features</h2>
             <ul>
-                <li>[Placeholder: Highlight important functionalities]</li>
-                <li>[Placeholder: What makes this project unique?]</li>
+                <li><strong>Word Embeddings:</strong> Utilized a Keras <code>Embedding</code> layer to map sparse integer representations of words into dense, continuous vectors, allowing the network to mathematically capture semantic meaning and word relationships.</li>
+                <li><strong>Sequential Data Processing:</strong> Deployed a Recurrent Neural Network (RNN) architecture capable of maintaining an internal "memory" state, ensuring the model analyzed the text in order and understood context (e.g., how the word "not" affects the word "good").</li>
+                <li><strong>Binary Text Classification:</strong> Condensed the sequential text features into a single continuous probability score using a Sigmoid activation function to classify the text's overall sentiment.</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Important Code Blocks</h2>
-            <p>[Placeholder: Explain what the snippet does and why it matters]</p>
-            <pre><code>
-// [Placeholder: Insert relevant code snippet here]
-// e.g., model.fit(X_train, y_train, epochs=10)
-            </code></pre>
+            
+            <p><strong>1. Text Sequence Padding</strong><br>
+            Neural networks require fixed-size input tensors, but human sentences vary in length. This snippet uses Keras's sequence utilities to truncate long reviews and pad short reviews with zeros, standardizing the input arrays.</p>
+            <pre><code>from tensorflow.keras.preprocessing import sequence
+
+# Pad sequences to ensure uniform input length for the RNN
+max_words = 500
+X_train = sequence.pad_sequences(X_train, maxlen=max_words)
+X_test = sequence.pad_sequences(X_test, maxlen=max_words)</code></pre>
+
+            <p><strong>2. RNN Architecture Definition</strong><br>
+            The model pipeline begins with an Embedding layer to generate word vectors, followed by the Recurrent layer to process the sequence, and finishes with a Dense binary classifier.</p>
+            <pre><code>import tensorflow as tf
+
+model = tf.keras.models.Sequential()
+
+# 1. Word Embedding Layer
+model.add(tf.keras.layers.Embedding(input_dim=10000, output_dim=32, input_length=max_words))
+
+# 2. Recurrent Neural Network Layer
+model.add(tf.keras.layers.SimpleRNN(units=32))
+
+# 3. Output Classification Layer
+model.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
+
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])</code></pre>
         </section>
 
         <section class="doc-section">
             <h2>Screenshots & Results</h2>
-            <div class="image-placeholder">
-                <p>[Placeholder: Insert UI screenshots or Output/Results here]</p>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="image-container">
+                    <img src="../../images/fn-project-8-1.png" alt="Positive Sentiment Prediction" class="project-img">
+                    <p style="text-align: center; margin-top: 10px; font-size: 0.9rem;"><em>Positive Sentiment Evaluation</em></p>
+                </div>
+                <div class="image-container">
+                    <img src="../../images/fn-project-8-2.png" alt="Negative Sentiment Prediction" class="project-img">
+                    <p style="text-align: center; margin-top: 10px; font-size: 0.9rem;"><em>Negative Sentiment Evaluation</em></p>
+                </div>
             </div>
+            <br>
+            <h3>Observations:</h3>
+            <ul>
+                <li>The RNN successfully mapped custom text inputs to their appropriate sentiments. It correctly identified the underlying tone of the test sentences, proving that the word embeddings and recurrent states accurately captured linguistic context rather than just analyzing isolated keywords.</li>
+            </ul>
         </section>
 
         <section class="doc-section">
             <h2>Tools & Technologies</h2>
             <ul>
-                <li><strong>Languages:</strong> [Placeholder]</li>
-                <li><strong>Libraries/Frameworks:</strong> [Placeholder]</li>
-                <li><strong>Platforms:</strong> [Placeholder]</li>
+                <li><strong>Languages:</strong> Python 3</li>
+                <li><strong>Libraries/Frameworks:</strong> TensorFlow/Keras (SimpleRNN, Embedding, sequence padding), NumPy</li>
+                <li><strong>Datasets:</strong> Keras IMDB Movie Review Dataset</li>
+                <li><strong>Platforms:</strong> Google Colab</li>
             </ul>
         </section>
 
         <section class="doc-section">
             <h2>Challenges & Solutions</h2>
-            <p><strong>Problems Encountered:</strong> [Placeholder]</p>
-            <p><strong>How I Solved Them:</strong> [Placeholder]</p>
+            <p><strong>Problems Encountered:</strong> Moving from image data to text data presented a fundamental dimensionality problem. An image has fixed pixels, but text is sequential and highly variable in length. Furthermore, neural networks cannot natively ingest raw strings; they only understand numbers.</p>
+            <p><strong>How I Solved Them:</strong> I utilized the pre-tokenized IMDB dataset, which provided text already converted into integer indices based on word frequency. To solve the variable length issue, I implemented <code>sequence.pad_sequences()</code> to strictly enforce a maximum length (e.g., 500 words), padding shorter reviews with <code>0</code>s and truncating longer ones, making the data mathematically viable for the network.</p>
         </section>
 
         <section class="doc-section">
             <h2>Learning Reflection</h2>
-            <p><strong>What I Learned:</strong> [Placeholder]</p>
-            <p><strong>Skills Gained:</strong> [Placeholder]</p>
+            <p><strong>What I Learned:</strong> I learned the distinct differences between CNNs (which look for spatial patterns) and RNNs (which look for sequential/temporal patterns). I also gained a solid foundational understanding of how NLP pipelines function, from integer encoding and sequence padding to generating semantic word embeddings.</p>
+            <p><strong>Skills Gained:</strong> Natural Language Processing preprocessing, implementing Embedding and SimpleRNN layers in Keras, and evaluating binary text classifiers.</p>
         </section>
     </main>
 
