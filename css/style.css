@@ -184,6 +184,17 @@ pre {
     border-radius: 5px;
 }
 
+/* Responsive Project Images */
+.project-img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 /* Footer */
 footer {
     background-color: var(--black);
